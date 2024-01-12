@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import { AuthState } from "@/stores/interface";
 import { getAuthButtonListApi, getAuthMenuListApi } from "@/api/modules/login";
-import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from "@/utils";
+import { getAllBreadcrumbList, getFlatMenuList, getShowMenuList } from "@/utils";
+import authDemoMenuList from "@/assets/json/authDemoMenuList.json";
+
+const demoMenu = import.meta.env.VITE_DEMO_MENU || false;
 
 export const useAuthStore = defineStore({
   id: "geeker-auth",
@@ -34,7 +37,12 @@ export const useAuthStore = defineStore({
     // Get AuthMenuList
     async getAuthMenuList() {
       const { data } = await getAuthMenuListApi();
-      this.authMenuList = data;
+      // 增加demo菜单
+      if (demoMenu) {
+        this.authMenuList = data.concat(authDemoMenuList);
+      } else {
+        this.authMenuList = data;
+      }
     },
     // Set RouteName
     async setRouteName(name: string) {

@@ -1,26 +1,30 @@
 <template>
   <div class="main-box">
     <TreeFilter
+      title="部门列表(多选)"
+      multiple
       label="name"
-      title="部门列表(单选)"
       :request-api="getUserDepartment"
-      :default-value="initParam.departmentId"
+      :default-value="treeFilterValues.departmentId"
       @change="changeTreeFilter"
     />
     <div class="table-box">
+      <div class="card mb10 pt0 pb0">
+        <SelectFilter :data="selectFilterData" :default-values="selectFilterValues" @change="changeSelectFilter" />
+      </div>
       <ProTable
         ref="proTable"
+        highlight-current-row
         :columns="columns"
         :request-api="getUserList"
-        :init-param="initParam"
-        :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
+        :init-param="Object.assign(treeFilterValues, selectFilterValues)"
       >
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
           <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
           <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加用户</el-button>
           <el-button type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
-          <el-button type="primary" plain @click="toDetail">To 平级详情页面</el-button>
+          <el-button type="primary" :icon="Pointer" plain @click="setCurrent">选中第四行</el-button>
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
@@ -35,19 +39,20 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="useTreeFilter">
-import { ref, reactive } from "vue";
+<script setup lang="ts" name="useSelectFilter">
+import { ref, reactive, onMounted, watch } from "vue";
 import { User } from "@/api/interface";
-import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
+import { genderType, userStatus } from "@/utils/dict";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
+import UserDrawer from "@/views/demo/proTable/components/UserDrawer.vue";
+import SelectFilter from "@/components/SelectFilter/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Pointer, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import {
   getUserList,
   deleteUser,
@@ -56,60 +61,82 @@ import {
   resetUserPassWord,
   exportUserInfo,
   BatchAddUser,
-  getUserStatus,
-  getUserGender,
-  getUserDepartment
+  getUserDepartment,
+  getUserRole
 } from "@/api/modules/user";
-
-const router = useRouter();
-
-// 跳转详情页
-const toDetail = () => {
-  router.push(`/proTable/useTreeFilter/detail/123456?params=detail-page`);
-};
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
-// 如果表格需要初始化请求参数，直接定义传给 ProTable(之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
-const initParam = reactive({ departmentId: "1" });
-
-// 树形筛选切换
-const changeTreeFilter = (val: string) => {
-  ElMessage.success("请注意查看请求参数变化 🤔");
-  proTable.value!.pageable.pageNum = 1;
-  initParam.departmentId = val;
-};
-
 // 表格配置项
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
+  { type: "radio", label: "单选", width: 80 },
   { type: "index", label: "#", width: 80 },
-  { prop: "username", label: "用户姓名", width: 120, search: { el: "input" } },
-  {
-    prop: "gender",
-    label: "性别",
-    width: 120,
-    sortable: true,
-    enum: getUserGender,
-    search: { el: "select" },
-    fieldNames: { label: "genderLabel", value: "genderValue" }
-  },
+  { prop: "username", label: "用户姓名", width: 120 },
+  { prop: "gender", label: "性别", width: 120, sortable: true, enum: genderType },
   { prop: "idCard", label: "身份证号" },
   { prop: "email", label: "邮箱" },
   { prop: "address", label: "居住地址" },
-  {
-    prop: "status",
-    label: "用户状态",
-    width: 120,
-    sortable: true,
-    tag: true,
-    enum: getUserStatus,
-    search: { el: "select" },
-    fieldNames: { label: "userLabel", value: "userStatus" }
-  },
-  { prop: "createTime", label: "创建时间", width: 180 },
+  { prop: "status", label: "用户状态", width: 120, sortable: true, tag: true, enum: userStatus },
+  { prop: "createTime", label: "创建时间", width: 180, sortable: true },
   { prop: "operation", label: "操作", width: 330, fixed: "right" }
 ]);
+
+// selectFilter 数据（用户角色为后台数据）
+const selectFilterData = reactive([
+  {
+    title: "用户状态(单)",
+    key: "userStatus",
+    options: [
+      { label: "全部", value: "" },
+      { label: "在职", value: "1", icon: "User" },
+      { label: "待培训", value: "2", icon: "Bell" },
+      { label: "待上岗", value: "3", icon: "Clock" },
+      { label: "已离职", value: "4", icon: "CircleClose" },
+      { label: "已退休", value: "5", icon: "CircleCheck" }
+    ]
+  },
+  {
+    title: "用户角色(多)",
+    key: "userRole",
+    multiple: true,
+    options: []
+  }
+]);
+
+// 获取用户角色字典
+onMounted(() => getUserRoleDict());
+const getUserRoleDict = async () => {
+  const { data } = await getUserRole();
+  selectFilterData[1].options = data as any;
+};
+
+// 默认 selectFilter 参数
+const selectFilterValues = ref({ userStatus: "2", userRole: ["1", "3"] });
+const changeSelectFilter = (value: typeof selectFilterValues.value) => {
+  ElMessage.success("请注意查看请求参数变化 🤔");
+  proTable.value!.pageable.pageNum = 1;
+  selectFilterValues.value = value;
+};
+
+// 默认 treeFilter 参数
+const treeFilterValues = reactive({ departmentId: ["11"] });
+const changeTreeFilter = (val: string[]) => {
+  ElMessage.success("请注意查看请求参数变化 🤔");
+  proTable.value!.pageable.pageNum = 1;
+  treeFilterValues.departmentId = val;
+};
+
+// 选择行
+const setCurrent = () => {
+  proTable.value!.radio = proTable.value?.tableData[3].id;
+  proTable.value?.element?.setCurrentRow(proTable.value?.tableData[3]);
+};
+
+watch(
+  () => proTable.value?.radio,
+  () => proTable.value?.radio && ElMessage.success(`选中 id 为【${proTable.value?.radio}】的数据`)
+);
 
 // 删除用户信息
 const deleteAccount = async (params: User.ResUserList) => {
