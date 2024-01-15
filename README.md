@@ -1,34 +1,49 @@
 # admin-web
 
-### 安装使用步骤 📔
+### 开发环境
+```text
+node.js：>=18.19.0
 
-- **Install：**
+yarn：>=4.0.2
+```
+推荐使用 volta进行node版本管理，查看[volta安装教程](https://docs.volta.sh/guide/getting-started)
+
+- **配置开发环境**
+
+```text
+volta install node@18.19.0
+volta install yarn@4.0.2
+```
+
+### 安装使用步骤
+
+- **安装包**
 
 ```text
 yarn
 ```
 
-- **Run：**
+- **启动**
 
 ```text
-pnpm dev
-pnpm serve
+yarn dev
+yarn serve
 ```
 
-- **Build：**
+- **构建**
 
 ```text
 # 开发环境
-pnpm build:dev
+yarn build:dev
 
 # 测试环境
-pnpm build:test
+yarn build:test
 
 # 生产环境
-pnpm build:pro
+yarn build:pro
 ```
 
-### 文件资源目录 📚
+### 文件资源目录
 
 ```text
 Geeker-Admin
@@ -65,19 +80,20 @@ Geeker-Admin
 ├─ .prettierrc.cjs         # Prettier 格式化配置
 ├─ .stylelintignore        # 忽略 stylelint 格式化
 ├─ .stylelintrc.cjs        # stylelint 样式格式化配置
+├─ .yarnrc.yml             # yarn内部配置文件
 ├─ commitlint.config.cjs   # git 提交规范配置
 ├─ index.html              # 入口 html
 ├─ LICENSE                 # 开源协议文件
 ├─ lint-staged.config.cjs  # lint-staged 配置文件
-├─ package-lock.json       # 依赖包包版本锁
 ├─ package.json            # 依赖包管理
 ├─ postcss.config.cjs      # postcss 配置
 ├─ README.md               # README 介绍
 ├─ tsconfig.json           # typescript 全局配置
-└─ vite.config.ts          # vite 全局配置文件
+├─ vite.config.ts          # vite 全局配置文件
+└─ yarn.lock               # 依赖包包版本锁
 ```
 
-### 浏览器支持 🌎
+### 浏览器支持
 
 - 本地开发推荐使用 Chrome 最新版浏览器 [Download](https://www.google.com/intl/zh-CN/chrome/)。
 - 生产环境支持现代浏览器，不再支持 IE 浏览器，更多浏览器可以查看 [Can I Use Es Module](https://caniuse.com/?search=ESModule)。
