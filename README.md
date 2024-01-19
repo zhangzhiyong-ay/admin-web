@@ -1,5 +1,6 @@
-# admin-web
-
+# Admin-Web
+### 介绍
+Admin-Web 一款基于Vue3、Vite、Pinia、Element-Plus开源的后台管理框架，该框架在 [Geeker-Admin](https://github.com/HalseySpicy/Geeker-Admin) 开源项目基础上进行二次开发，目前功能处理开发阶段。
 ### 开发环境
 ```text
 node.js：>=18.19.0
@@ -101,3 +102,6 @@ Geeker-Admin
 | ![IE](https://i.imgtg.com/2023/04/11/8z7ot.png) | ![Edge](https://i.imgtg.com/2023/04/11/8zr3p.png) | ![Firefox](https://i.imgtg.com/2023/04/11/8zKiU.png) | ![Chrome](https://i.imgtg.com/2023/04/11/8zNrx.png) | ![Safari](https://i.imgtg.com/2023/04/11/8zeGj.png) |
 | :---------------------------------------------: | :-----------------------------------------------: | :--------------------------------------------------: | :-------------------------------------------------: | :-------------------------------------------------: |
 |                   not support                   |                  last 2 versions                  |                   last 2 versions                    |                   last 2 versions                   |                   last 2 versions                   |
+
+### 感谢
+感谢 [Geeker-Admin](https://github.com/HalseySpicy/Geeker-Admin) 的开源项目。
