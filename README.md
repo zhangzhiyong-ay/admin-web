@@ -47,7 +47,7 @@ yarn build:pro
 ### 文件资源目录
 
 ```text
-Geeker-Admin
+ehan-admin-web
 ├─ build                   # Vite 配置项
 ├─ public                  # 静态资源文件（该文件夹不会被打包）
 ├─ src

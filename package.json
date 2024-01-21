@@ -1,29 +1,29 @@
 {
-  "name": "geeker-admin",
+  "name": "ehan-admin-web",
   "private": true,
-  "version": "1.2.0",
+  "version": "0.0.1",
   "type": "module",
-  "description": "geeker-admin open source management system",
+  "description": "开源WEB端管理框架",
   "author": {
-    "name": "Geeker",
-    "email": "848130454@qq.com",
-    "url": "https://github.com/HalseySpicy"
+    "name": "zhangzhiyong",
+    "email": "zhangzhiyong1221@qq.com",
+    "url": "https://github.com/zhangzhiyong-ay"
   },
   "license": "MIT",
-  "homepage": "https://github.com/HalseySpicy/Geeker-Admin",
+  "homepage": "https://github.com/zhangzhiyong-ay/ehan-admin-web",
   "repository": {
     "type": "git",
-    "url": "git@github.com:HalseySpicy/Geeker-Admin.git"
+    "url": "git@github.com:zhangzhiyong-ay/ehan-admin-web.git"
   },
   "bugs": {
-    "url": "https://github.com/HalseySpicy/Geeker-Admin/issues"
+    "url": "https://github.com/zhangzhiyong-ay/ehan-admin-web/issues"
   },
   "scripts": {
     "dev": "vite",
     "serve": "vite",
     "build:dev": "vue-tsc && vite build --mode development",
     "build:test": "vue-tsc && vite build --mode test",
-    "build:pro": "vue-tsc && vite build --mode production",
+    "build:prod": "vue-tsc && vite build --mode production",
     "type:check": "vue-tsc --noEmit --skipLibCheck",
     "preview": "npm run build:dev && vite preview",
     "lint:eslint": "eslint --fix --ext .js,.ts,.vue ./src",
